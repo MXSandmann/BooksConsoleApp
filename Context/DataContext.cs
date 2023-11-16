@@ -1,5 +1,7 @@
 using BooksConsoleApp.Entities;
+using BooksConsoleApp.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace BooksConsoleApp.Context;
 
@@ -38,6 +40,7 @@ public class DataContext : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(_connectionString);
+        var connectionString = ConfigurationHelper.GetConnectionString();
+        optionsBuilder.UseSqlServer(connectionString);
     }
 }
