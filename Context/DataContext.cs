@@ -1,5 +1,5 @@
-using BooksConsoleApp.Entities;
 using BooksConsoleApp.Helpers;
+using BooksConsoleApp.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 

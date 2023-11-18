@@ -1,6 +1,8 @@
 ﻿using BooksConsoleApp;
+using BooksConsoleApp.Services;
 
-UserInteractor.Start();
+MigrationsService.UpdateDatabase();
+await UserInteractor.Start();
 
 
 

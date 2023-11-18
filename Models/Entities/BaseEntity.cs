@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BooksConsoleApp.Entities;
+namespace BooksConsoleApp.Models.Entities;
 
 public abstract class BaseEntity
 {
