@@ -16,20 +16,20 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Book>()
-            .HasOne<Author>()
-            .WithOne()
-            .HasForeignKey<Book>(x => x.AuthorId);
-        
+            .HasOne(x => x.Author)
+            .WithMany(x => x.Books)
+            .HasForeignKey(x => x.AuthorId);
+
         modelBuilder.Entity<Book>()
-            .HasOne<Genre>()
-            .WithOne()
-            .HasForeignKey<Book>(x => x.GenreId);
-        
+            .HasOne(x => x.Genre)
+            .WithMany(x => x.Books)
+            .HasForeignKey(x => x.GenreId);
+
         modelBuilder.Entity<Book>()
-            .HasOne<Publisher>()
-            .WithOne()
-            .HasForeignKey<Book>(x => x.PublisherId);
-        
+            .HasOne(x => x.Publisher)
+            .WithMany(x => x.Books)
+            .HasForeignKey(x => x.PublisherId);
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
     }
 

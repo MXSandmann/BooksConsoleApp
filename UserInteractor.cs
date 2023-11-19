@@ -1,5 +1,3 @@
-using BooksConsoleApp.Context;
-using BooksConsoleApp.Helpers;
 using BooksConsoleApp.Services;
 
 namespace BooksConsoleApp;
@@ -14,26 +12,34 @@ public static class UserInteractor
             Console.WriteLine("1: Add books from file");
             Console.WriteLine("2: Search books using filter");
 
-            var key = Console.ReadKey(true).KeyChar;
-
-            switch (key)
+            switch (Console.ReadKey(true).KeyChar)
             {
                 case '1':
                 {
                     Console.WriteLine("Please enter path to the file:");
-                    var path = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(path))
+                    try
                     {
-                        Console.WriteLine("Empty path is provided");
-                        break;
+                        var path = Console.ReadLine();
+                        await ImportService.ImportFromCsv(path!);
+                        Console.WriteLine("Data successfully imported!");
                     }
-                    await ImportService.ImportFromCsv(path);
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Error while importing file: {e.Message}, {e.InnerException}");
+                    }
                     break;
                 }
                 case '2':
                     Console.WriteLine("Applying filter, printing the search results...");
+                    var results = await QueryService.SearchWithFilter();
+                    results.ForEach(Console.WriteLine);
                     break;
             }
+            
+            Console.WriteLine("Press any key to continue or Esc to exit:");
+            var keyInfo = Console.ReadKey(true);
+            if (keyInfo.Key == ConsoleKey.Escape)
+                break;
         }
     }
 }

@@ -8,7 +8,7 @@ internal static class ConfigurationHelper
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            .AddJsonFile(Configurations.PathToAppsettings, optional: true, reloadOnChange: true);
 
         var configuration = builder.Build();
         var connectionString = configuration.GetConnectionString("SqlServer")!;

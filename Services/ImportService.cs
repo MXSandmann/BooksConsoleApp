@@ -12,43 +12,41 @@ public static class ImportService
 {
     public static async Task ImportFromCsv(string path)
     {
-        try
+        using var reader = new StreamReader(path);
+        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        var records = csv.GetRecords<BookDto>().ToList();
+    
+        var connectionString = ConfigurationHelper.GetConnectionString();
+        await using var context = new DataContext(connectionString);
+
+        foreach (var record in records)
         {
-            using var reader = new StreamReader(path);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            var records = csv.GetRecords<BookDto>().ToList();
-        
-            var connectionString = ConfigurationHelper.GetConnectionString();
-            await using var context = new DataContext(connectionString);
+            // Add authors, genres and publishers first
+            var authorTask = GetOrAddAuthor(connectionString, record);
+            var publisherTask =  GetOrAddPublisher(connectionString, record);
+            var genreTask =  GetOrAddGenre(connectionString, record);
 
-            foreach (var record in records)
-            {
-                // Add authors, genres and publishers first
-                var authorTask = GetOrAddAuthor(connectionString, record);
-                var publisherTask =  GetOrAddPublisher(connectionString, record);
-                var genreTask =  GetOrAddGenre(connectionString, record);
+            await Task.WhenAll(authorTask, publisherTask, genreTask);
 
-                await Task.WhenAll(authorTask, publisherTask, genreTask);
+            var author = await authorTask;
+            var genre = await genreTask;
+            var publisher = await publisherTask;
+            
+            // Add books with foreign keys
+            var bookExists = await context.Books
+                .Include(x => x.Author)
+                .Include(x => x.Publisher)
+                .AnyAsync(x => x.Title == record.Title
+                    && x.Publisher.Name == record.Publisher
+                    && x.Author.Name == record.Author);
+            if (bookExists) continue;
 
-                var author = await authorTask;
-                var genre = await genreTask;
-                var publisher = await publisherTask;
-                
-                // Add books with foreign keys
-                var bookExists = await context.Books.AnyAsync(x => x.Title == record.Title);
-                if (bookExists) continue;
-
-                var book = Book.FromBookDto(record);
-                book.AuthorId = author.Id;
-                book.GenreId = genre.Id;
-                book.PublisherId = publisher.Id;
-                context.Books.Add(book);
-                await context.SaveChangesAsync();
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error while importing file: {e.Message}, {e.InnerException}");
+            var book = Book.FromBookDto(record);
+            book.AuthorId = author.Id;
+            book.GenreId = genre.Id;
+            book.PublisherId = publisher.Id;
+            context.Books.Add(book);
+            await context.SaveChangesAsync();
         }
     }
 
@@ -59,7 +57,7 @@ public static class ImportService
         if (author is not null)
             return author;
         var newAuthor = Author.FromBookDto(dto);
-        context.Authors.Add(newAuthor);
+        await context.AddAsync(newAuthor);
         await context.SaveChangesAsync();
         return newAuthor;
     }
@@ -71,7 +69,7 @@ public static class ImportService
         if (genre is not null)
             return genre;
         var newGenre = Genre.FromBookDto(dto);
-        context.Genres.Add(newGenre);
+        await context.Genres.AddAsync(newGenre);
         await context.SaveChangesAsync();
         return newGenre;
     }
@@ -83,7 +81,7 @@ public static class ImportService
         if (publisher is not null)
             return publisher;
         var newPublisher = Publisher.FromBookDto(dto);
-        context.Publishers.Add(newPublisher);
+        await context.Publishers.AddAsync(newPublisher);
         await context.SaveChangesAsync();
         return newPublisher;
     }
