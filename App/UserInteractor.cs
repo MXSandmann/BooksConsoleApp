@@ -35,10 +35,10 @@ public static class UserInteractor
                     results.ForEach(Console.WriteLine);
                     break;
             }
-            
+
             Console.WriteLine("Press any key to continue or Esc to exit:");
             var keyInfo = Console.ReadKey(true);
-            
+
             if (keyInfo.Key != ConsoleKey.Escape) continue;
             Console.WriteLine("Goodbye!");
             break;

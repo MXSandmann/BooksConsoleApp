@@ -22,6 +22,15 @@ public class Filter
         if (!string.IsNullOrWhiteSpace(Title))
             results.Add(new TitleSpecification(Title));
         
+        if (!string.IsNullOrWhiteSpace(Author))
+            results.Add(new AuthorSpecification(Author));
+        
+        if (!string.IsNullOrWhiteSpace(Genre))
+            results.Add(new GenreSpecification(Genre));
+        
+        if (!string.IsNullOrWhiteSpace(Publisher))
+            results.Add(new PublisherSpecification(Publisher));
+        
         if (MoreThenPages.HasValue)
             results.Add(new MoreThenPagesSpecifications(MoreThenPages.Value));
         

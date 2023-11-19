@@ -22,8 +22,6 @@ public static class QueryService
 
         var specifications = filter.PrepareSpecifications();
 
-        //var test = new TitleSpecification("1984").Criteria;
-        
         var results = await context.Books
             .Include(x => x.Author)
             .Include(x => x.Genre)
