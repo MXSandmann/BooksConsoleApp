@@ -28,15 +28,18 @@ public class Filter
         if (LessThenPages.HasValue)
             results.Add(new LessThenPagesSpecifications(LessThenPages.Value));
 
+        if (!results.Any())
+            return book => true; // Fallback if no specifications
 
-        var left = results[0];
-        var right = results[1];
-        var andExpression = Expression.AndAlso(left.Criteria.Body, right.Criteria.Body);
-        var paramExpression = Expression.Parameter(typeof(Book));
-        andExpression =
-            (BinaryExpression)new ParameterReplacer(Expression.Parameter(typeof(Book))).Visit(andExpression);
-        var lambda = Expression.Lambda<Func<Book, bool>>(andExpression, Expression.Parameter(typeof(Book)));
+        var parameter = Expression.Parameter(typeof(Book), "book");
+        Expression combinedExpression = Expression.Invoke(results.First().Criteria, parameter);
 
-        return lambda;
+        foreach (var spec in results.Skip(1))
+        {
+            var invokedExpr = Expression.Invoke(spec.Criteria, parameter);
+            combinedExpression = Expression.AndAlso(combinedExpression, invokedExpr);
+        }
+
+        return Expression.Lambda<Func<Book, bool>>(combinedExpression, parameter);
     }
 }
