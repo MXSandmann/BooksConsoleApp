@@ -29,12 +29,14 @@ public class Filter
             results.Add(new LessThenPagesSpecifications(LessThenPages.Value));
 
 
-        var and1 = results[0];
-        var and2 = results[1];
-        var body = Expression.AndAlso(and1.Criteria.Body, and2.Criteria.Body);
+        var left = results[0];
+        var right = results[1];
+        var andExpression = Expression.AndAlso(left.Criteria.Body, right.Criteria.Body);
+        var paramExpression = Expression.Parameter(typeof(Book));
+        andExpression =
+            (BinaryExpression)new ParameterReplacer(Expression.Parameter(typeof(Book))).Visit(andExpression);
+        var lambda = Expression.Lambda<Func<Book, bool>>(andExpression, Expression.Parameter(typeof(Book)));
 
-        var lambda = Expression.Lambda<Func<Book, bool>>(body, and1.Criteria.Parameters);
-        
         return lambda;
     }
 }

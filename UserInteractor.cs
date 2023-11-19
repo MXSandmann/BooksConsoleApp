@@ -38,8 +38,10 @@ public static class UserInteractor
             
             Console.WriteLine("Press any key to continue or Esc to exit:");
             var keyInfo = Console.ReadKey(true);
-            if (keyInfo.Key == ConsoleKey.Escape)
-                break;
+            
+            if (keyInfo.Key != ConsoleKey.Escape) continue;
+            Console.WriteLine("Goodbye!");
+            break;
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Text.Json;
 using BooksConsoleApp.Context;
 using BooksConsoleApp.Helpers;
 using BooksConsoleApp.Models;
+using BooksConsoleApp.Specifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace BooksConsoleApp.Services;
@@ -20,7 +21,13 @@ public static class QueryService
         await using var context = new DataContext(connectionString);
 
         var specifications = filter.PrepareSpecifications();
+
+        //var test = new TitleSpecification("1984").Criteria;
+        
         var results = await context.Books
+            .Include(x => x.Author)
+            .Include(x => x.Genre)
+            .Include(x => x.Publisher)
             .Where(specifications)
             .Select(x => BookDto.FromEntity(x))
             .ToListAsync();
