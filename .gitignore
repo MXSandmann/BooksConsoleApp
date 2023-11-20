@@ -1,0 +1,7 @@
+.idea/
+obj/
+.env
+bin/
+books.csv
+BooksConsoleApp.sln.DotSettings.user
+App/secrets.json
