@@ -3,16 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BooksConsoleApp.Tests.Helpers;
+namespace BooksConsoleApp.Providers;
 
-internal static class TestServiceProvider
+public static class ServiceBuilder
 {
-    internal static IServiceProvider Build(string pathToApp)
+    public static IServiceProvider Get()
     {
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(pathToApp)
-            .AddJsonFile(Path.Combine(pathToApp, Configurations.PathToAppsettings), optional: true, reloadOnChange: true)
-            .AddJsonFile(Path.Combine(pathToApp, Configurations.PathToSecrets), optional: true, reloadOnChange: true)
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile(Configurations.PathToAppsettings, optional: true, reloadOnChange: true)
+            .AddJsonFile(Configurations.PathToSecrets, optional: true, reloadOnChange: true)
             .Build();
 
         var connectionString = configuration.GetConnectionString("SqlServer")!;
@@ -20,7 +20,9 @@ internal static class TestServiceProvider
         var serviceProvider = new ServiceCollection()
             .AddSingleton<IConfiguration>(configuration)
             .AddDbContext<DataContext>(opt => opt.UseSqlServer(connectionString))
+            .AddOptions<Filter>().Bind(configuration.GetSection(Filter.SectionName)).Services
             .BuildServiceProvider();
+
         return serviceProvider;
     }
 }

@@ -26,7 +26,6 @@ public static class UserInteractor
     }
 
     private static Task Select(char key, IServiceProvider provider) =>
-
         key switch
         {
             '1' => Import(provider),

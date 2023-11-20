@@ -1,7 +1,7 @@
 using BooksConsoleApp.Context;
 using BooksConsoleApp.Models;
 using BooksConsoleApp.Services;
-using BooksConsoleApp.Tests.Extensions;
+using BooksConsoleApp.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
