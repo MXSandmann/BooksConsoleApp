@@ -8,14 +8,14 @@ namespace BooksConsoleApp;
 public class Filter
 {
     public const string SectionName = "Filter";
-    public string? Title { get; set; }
-    public string? Genre { get; set; }
-    public string? Author { get; set; }
-    public string? Publisher { get; set; }
-    public int? MoreThenPages { get; set; }
-    public int? LessThenPages { get; set; }
-    public string? PublishedBefore { get; set; }
-    public string? PublishedAfter { get; set; }
+    public string? Title { get; init; }
+    public string? Genre { get; init; }
+    public string? Author { get; init; }
+    public string? Publisher { get; init; }
+    public int? MoreThenPages { get; init; }
+    public int? LessThenPages { get; init; }
+    public string? PublishedBefore { get; init; }
+    public string? PublishedAfter { get; init; }
 
     public Filter Validate()
     {
@@ -27,9 +27,11 @@ public class Filter
             && MoreThenPages.HasValue
             && LessThenPages.Value < MoreThenPages.Value)
             throw new FilterValidationException($"{nameof(MoreThenPages)} should be greater then {nameof(LessThenPages)}!");
-        if (DateTime.TryParse(PublishedBefore, out _))
+        if (!string.IsNullOrWhiteSpace(PublishedBefore) 
+            && !DateTime.TryParse(PublishedBefore, out _))
             throw new FilterValidationException($"{nameof(PublishedBefore)} is not DateTime format!");
-        if (DateTime.TryParse(PublishedAfter, out _))
+        if (!string.IsNullOrWhiteSpace(PublishedAfter)
+            && !DateTime.TryParse(PublishedAfter, out _))
             throw new FilterValidationException($"{nameof(PublishedAfter)} is not DateTime format!");
         return this;
     }

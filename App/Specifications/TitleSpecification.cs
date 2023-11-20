@@ -7,5 +7,5 @@ public class TitleSpecification : ISpecification<Book>
 {
     private readonly string _title;
     public TitleSpecification(string title) => _title = title;
-    public Expression<Func<Book, bool>> Criteria => book => book.Title == _title;
+    public Expression<Func<Book, bool>> Criteria => book => book.Title.Contains(_title.ToLower());
 }

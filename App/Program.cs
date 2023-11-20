@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile(Configurations.PathToAppsettings, optional: true, reloadOnChange: true)
     .AddJsonFile(Configurations.PathToAppsettings, optional: true, reloadOnChange: true)
     .Build();
 
@@ -20,4 +20,4 @@ var serviceProvider = new ServiceCollection()
     .BuildServiceProvider();
 
 MigrationsService.UpdateDatabase(serviceProvider);
-await UserInteractor.Start(serviceProvider, configuration);
+await UserInteractor.Start(serviceProvider);

@@ -1,19 +1,14 @@
 using BooksConsoleApp.Context;
 using BooksConsoleApp.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace BooksConsoleApp.Services;
 
 public static class QueryService
 {
-    public static async Task<List<BookDto>> SearchWithFilter(IServiceProvider provider)
+    public static async Task<List<BookDto>> SearchWithFilter(DataContext context, IOptions<Filter> filter)
     {
-        using var scope = provider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-
-        var filter = scope.ServiceProvider.GetRequiredService<IOptions<Filter>>();
         ArgumentNullException.ThrowIfNull(filter);
 
         var specifications = filter.Value

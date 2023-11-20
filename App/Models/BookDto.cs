@@ -17,7 +17,7 @@ public record BookDto(
             book.Title,
             book.Pages,
             book.Genre.Name,
-            book.ReleaseDate.ToString(CultureInfo.InvariantCulture),
+            book.ReleaseDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture),
             book.Author.Name,
             book.Publisher.Name);
     }

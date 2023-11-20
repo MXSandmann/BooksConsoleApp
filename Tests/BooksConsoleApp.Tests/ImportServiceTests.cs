@@ -1,6 +1,7 @@
 using BooksConsoleApp.Context;
 using BooksConsoleApp.Models;
 using BooksConsoleApp.Services;
+using BooksConsoleApp.Tests.Extensions;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,7 @@ public class ImportServiceTests
     public async Task ShouldImport_WhenAllOk()
     {
         // Arrange
-        var serviceProvider = BuildTestServiceProvider(Path.GetFullPath(_pathToApp));
+        var serviceProvider = TestServiceProvider.Build(Path.GetFullPath(_pathToApp));
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<DataContext>();
         await context.Database.MigrateAsync();
@@ -44,22 +45,6 @@ public class ImportServiceTests
             .OnlyContain(x => x.Pages > 0)
             .And
             .OnlyContain(x => !string.IsNullOrWhiteSpace(x.ReleaseDate));
-    }
-
-    private static IServiceProvider BuildTestServiceProvider(string pathToApp)
-    {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(pathToApp)
-            .AddJsonFile(Path.Combine(pathToApp, "appsettings.json"), optional: true, reloadOnChange: true)
-            .Build();
-
-        var connectionString = configuration.GetConnectionString("SqlServer")!;
-
-        var serviceProvider = new ServiceCollection()
-            .AddSingleton<IConfiguration>(configuration)
-            .AddDbContext<DataContext>(opt => opt.UseSqlServer(connectionString))
-            .BuildServiceProvider();
-        return serviceProvider;
     }
 }
 
