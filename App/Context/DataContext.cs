@@ -18,6 +18,9 @@ public class DataContext : DbContext
         _connectionString = configuration.GetConnectionString("SqlServer")!;
     }
 
+    //[Obsolete("Used only for integration tests!")]
+    //public DataContext(string connectionString) => _connectionString = connectionString;
+
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
