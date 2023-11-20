@@ -20,6 +20,7 @@ public class ImportServiceTests
         var serviceProvider = BuildTestServiceProvider(Path.GetFullPath(_pathToApp));
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+        await context.Database.MigrateAsync();
 
         // Act
         await ImportService.ImportFromCsv(_pathToCsv, serviceProvider);
@@ -38,10 +39,14 @@ public class ImportServiceTests
             .And
             .OnlyContain(x => !string.IsNullOrWhiteSpace(x.Genre))
             .And
-            .OnlyContain(x => !string.IsNullOrWhiteSpace(x.Publisher));
+            .OnlyContain(x => !string.IsNullOrWhiteSpace(x.Publisher))
+            .And
+            .OnlyContain(x => x.Pages > 0)
+            .And
+            .OnlyContain(x => !string.IsNullOrWhiteSpace(x.ReleaseDate));
     }
 
-    private IServiceProvider BuildTestServiceProvider(string pathToApp)
+    private static IServiceProvider BuildTestServiceProvider(string pathToApp)
     {
         var configuration = new ConfigurationBuilder()
             .SetBasePath(pathToApp)
@@ -51,8 +56,8 @@ public class ImportServiceTests
         var connectionString = configuration.GetConnectionString("SqlServer")!;
 
         var serviceProvider = new ServiceCollection()
+            .AddSingleton<IConfiguration>(configuration)
             .AddDbContext<DataContext>(opt => opt.UseSqlServer(connectionString))
-            //.Configure<Filter>(configuration.GetSection(Configurations.FilterSectionName))
             .BuildServiceProvider();
         return serviceProvider;
     }

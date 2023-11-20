@@ -7,21 +7,11 @@ namespace BooksConsoleApp.Context;
 public class DataContext : DbContext
 {
     private readonly string _connectionString;
-    
-    [Obsolete("Used only for migrations!")]
-    public DataContext()
+
+    public DataContext(DbContextOptions<DataContext> options, IConfiguration configuration) : base(options)
     {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(Configurations.PathToAppsettings, optional: true, reloadOnChange: true)
-            .Build();
         _connectionString = configuration.GetConnectionString("SqlServer")!;
     }
-
-    //[Obsolete("Used only for integration tests!")]
-    //public DataContext(string connectionString) => _connectionString = connectionString;
-
-    public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
