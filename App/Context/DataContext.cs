@@ -1,4 +1,3 @@
-using BooksConsoleApp.Helpers;
 using BooksConsoleApp.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,9 +8,17 @@ public class DataContext : DbContext
 {
     private readonly string _connectionString;
     
-    public DataContext() { }
+    [Obsolete("Used only for migrations!")]
+    public DataContext()
+    {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile(Configurations.PathToAppsettings, optional: true, reloadOnChange: true)
+            .Build();
+        _connectionString = configuration.GetConnectionString("SqlServer")!;
+    }
 
-    public DataContext(string connectionString) => _connectionString = connectionString;
+    public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,9 +45,5 @@ public class DataContext : DbContext
     public DbSet<Genre> Genres { get; set; } = null!;
     public DbSet<Publisher> Publishers { get; set; } = null!;
     
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        var connectionString = ConfigurationHelper.GetConnectionString();
-        optionsBuilder.UseSqlServer(connectionString);
-    }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer(_connectionString);
 }

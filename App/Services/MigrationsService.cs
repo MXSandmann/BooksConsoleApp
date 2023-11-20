@@ -1,15 +1,15 @@
 using BooksConsoleApp.Context;
-using BooksConsoleApp.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BooksConsoleApp.Services;
 
 public static class MigrationsService
 {
-    public static void UpdateDatabase()
+    public static void UpdateDatabase(IServiceProvider serviceProvider)
     {
-        var connectionString = ConfigurationHelper.GetConnectionString();
-        using var context = new DataContext(connectionString);
+        using var scope = serviceProvider.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<DataContext>();
         context.Database.Migrate();
         Console.WriteLine("Successfully connected and updated the database!");
     }

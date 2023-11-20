@@ -1,10 +1,12 @@
+using BooksConsoleApp.Providers;
 using BooksConsoleApp.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace BooksConsoleApp;
 
 public static class UserInteractor
 {
-    public static async Task Start()
+    public static async Task Start(IServiceProvider provider, IConfiguration configuration)
     {
         while (true)
         {
@@ -20,19 +22,26 @@ public static class UserInteractor
                     try
                     {
                         var path = Console.ReadLine();
-                        await ImportService.ImportFromCsv(path!);
+                        await ImportService.ImportFromCsv(path!, provider);
                         Console.WriteLine("Data successfully imported!");
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine($"Error while importing file: {e.Message}, {e.InnerException}");
+                        Console.WriteLine($"Error while importing file: {e.Message} {e.InnerException}");
                     }
                     break;
                 }
                 case '2':
-                    Console.WriteLine("Applying filter, printing the search results...");
-                    var results = await QueryService.SearchWithFilter();
-                    results.ForEach(Console.WriteLine);
+                    try
+                    {
+                        Console.WriteLine("Applying filter, printing the search results...");
+                        var results = await QueryService.SearchWithFilter(provider);
+                        results.ForEach(Console.WriteLine);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Error while querying the database: {e.Message} {e.InnerException}");
+                    }
                     break;
             }
 

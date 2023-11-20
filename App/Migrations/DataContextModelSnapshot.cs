@@ -34,7 +34,7 @@ namespace BooksConsoleApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("BooksConsoleApp.Models.Entities.Book", b =>
@@ -70,7 +70,7 @@ namespace BooksConsoleApp.Migrations
 
                     b.HasIndex("PublisherId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("BooksConsoleApp.Models.Entities.Genre", b =>
@@ -85,7 +85,7 @@ namespace BooksConsoleApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("BooksConsoleApp.Models.Entities.Publisher", b =>
@@ -100,7 +100,7 @@ namespace BooksConsoleApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Publishers");
+                    b.ToTable("Publishers", (string)null);
                 });
 
             modelBuilder.Entity("BooksConsoleApp.Models.Entities.Book", b =>

@@ -1,13 +1,17 @@
 using Microsoft.Extensions.Configuration;
 
-namespace BooksConsoleApp.Helpers;
+namespace BooksConsoleApp.Providers;
 
-internal static class ConfigurationHelper
+public class ConfigurationProvider
 {
-    internal static string GetConnectionString()
+    private readonly string _dir;
+    public ConfigurationProvider(string dir) => _dir = dir;
+
+    public string GetConnectionString()
     {
+        //var dir = Directory.GetCurrentDirectory();
         var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(_dir)
             .AddJsonFile(Configurations.PathToAppsettings, optional: true, reloadOnChange: true);
 
         var configuration = builder.Build();
