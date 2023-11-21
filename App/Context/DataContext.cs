@@ -6,8 +6,11 @@ namespace BooksConsoleApp.Context;
 
 public class DataContext : DbContext
 {
-    private readonly string _connectionString;
+    private readonly string _connectionString = default!;
 
+    [Obsolete("Only for migrations!")]
+    public DataContext() { }
+    
     public DataContext(DbContextOptions<DataContext> options, IConfiguration configuration) : base(options)
     {
         _connectionString = configuration.GetConnectionString("SqlServer")!;
