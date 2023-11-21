@@ -78,4 +78,18 @@ public class Filter
 
         return Expression.Lambda<Func<Book, bool>>(combinedExpression, parameter);
     }
+    
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(Title);
+        hash.Add(Genre);
+        hash.Add(Author);
+        hash.Add(Publisher);
+        hash.Add(MoreThenPages);
+        hash.Add(LessThenPages);
+        hash.Add(PublishedBefore);
+        hash.Add(PublishedAfter);
+        return hash.ToHashCode();
+    }
 }

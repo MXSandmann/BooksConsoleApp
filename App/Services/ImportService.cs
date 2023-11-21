@@ -10,6 +10,11 @@ namespace BooksConsoleApp.Services;
 
 public static class ImportService
 {
+    /// <summary>
+    /// Imports all records from a given csv file into a database as batches
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="provider"></param>
     public static async Task ImportFromCsv(string path, IServiceProvider provider)
     {
         using var scope = provider.CreateScope();
