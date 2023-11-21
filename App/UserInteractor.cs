@@ -53,13 +53,20 @@ public static class UserInteractor
         try
         {
             Console.WriteLine("Applying filter, printing the search results...");
-                        
+
             using var scope = provider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DataContext>();
             var filter = scope.ServiceProvider.GetRequiredService<IOptions<Filter>>();
             var results = await QueryService.SearchWithFilter(context, filter);
-                        
             Console.WriteLine(results.Print());
+            Console.WriteLine("Pls give a path to save the output file:");
+            var output = Console.ReadLine()!;
+            var fileName = await CsvWriterService.SaveToCsv(results, filter.Value, output);
+            Console.WriteLine($"File '{fileName}' created in '{output}'!");
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine($"Error while creating an output file: {e.Message} {e.InnerException}");
         }
         catch (Exception e)
         {

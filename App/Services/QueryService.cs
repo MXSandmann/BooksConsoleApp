@@ -7,6 +7,12 @@ namespace BooksConsoleApp.Services;
 
 public static class QueryService
 {
+    /// <summary>
+    /// Queries the database applying given filters using Specification Pattern
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="filter"></param>
+    /// <returns>List of BookDto mapped from Book Entity</returns>
     public static async Task<List<BookDto>> SearchWithFilter(DataContext context, IOptions<Filter> filter)
     {
         ArgumentNullException.ThrowIfNull(filter);
